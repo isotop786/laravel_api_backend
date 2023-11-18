@@ -16,9 +16,14 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+      public function __construct() {
+        // $this->middleware('auth');
+     }
+
     public function index()
     {
-        return User::paginate(5);
+        return User::paginate();
     }
 
     /**
@@ -62,7 +67,7 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, $id)
     {
         $user = User::find($id);
-        
+
         $user->update($request->only('first_name','last_name','email'));
 
         return response($user, Response::HTTP_ACCEPTED);
