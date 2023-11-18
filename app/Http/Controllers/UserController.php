@@ -8,6 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\UpdateInfoRequest;
+use App\Http\Requests\UpdatePasswordRequest;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -84,5 +88,28 @@ class UserController extends Controller
         User::destroy($id);
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function user()
+    {
+        return Auth::user();
+    }
+
+    public function updateInfo(UpdateInfoRequest $request)
+    {
+        $user = Auth::user();
+
+        $user->update($request->only('first_name','last_name','email'));
+
+        return response($user, Response::HTTP_ACCEPTED);
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        $user = Auth::user();
+
+        $user->update([
+            'password' => Hash::make($request->input('password')),
+        ]);
     }
 }
