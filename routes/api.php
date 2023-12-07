@@ -24,8 +24,8 @@ use Illuminate\Support\Facades\Route;
 // Route::put('users/{id}','UserController@update');
 // Route::delete('users/{id}','UserController@destroy');
 
-Route::post('login','AuthController@login');
-Route::post('register','AuthController@register');
+Route::post('login','AuthController@login')->name('login');
+Route::post('register','AuthController@register')->name('register');
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::get('user','UserController@user');
@@ -35,4 +35,6 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     Route::apiResource('users','UserController');
     Route::apiResource('roles','RoleController');
+    Route::apiResource('categories','CategoryController');
+    Route::apiResource('products','ProductController');
 });
