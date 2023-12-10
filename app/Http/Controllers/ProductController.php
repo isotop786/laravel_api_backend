@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CreateProductRequest;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\ProductResource;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
 
 
 class ProductController extends Controller
@@ -18,6 +20,10 @@ class ProductController extends Controller
      */
     public function index()
     {
+        // dd(\Auth::user());
+        if(! Gate::allows('view-products')){
+            abort(403);
+        }
         // return Product::with('category')->paginate(10);
         return ProductResource::collection(Product::with('category')->paginate(10));
     }
@@ -29,9 +35,15 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // public function store(CreateProductRequest $request)
+    // {
+    //     $product = Product::create($request->all());
+    //     return response($product, Response::HTTP_CREATED);
+    // }
     public function store(CreateProductRequest $request)
     {
-        $product = Product::create($request->all());
+       
+        $product = Product::create($request->only('title','description','image','price'));
         return response($product, Response::HTTP_CREATED);
     }
 
@@ -44,13 +56,9 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        // return new UserResource($user);
+       
 
-        // if($product){
-        //     return new ProductResource(Product::findOrFail($id));
-        // }
-
-        return $product;
+        return new ProductResource($product);
     }
 
 
@@ -61,10 +69,11 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request,  $id)
     {
+        $product = Product::find($id);
         $product->update($request->only('title','description','image','product','category_id'));
-        return new ProductResource($product);
+        return response($product, Response::HTTP_ACCEPTED);
     }
 
     /**

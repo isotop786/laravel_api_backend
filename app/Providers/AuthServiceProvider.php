@@ -28,6 +28,14 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
         Passport::routes();
 
+        Gate::define('view-products', function () {
+            if(\Auth::user()->role_id == 1){
+                return true;
+            }
+
+            return false;
+
+        });
 
         //
     }
